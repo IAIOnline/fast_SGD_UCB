@@ -1,0 +1,22 @@
+Metadata-Version: 2.1
+Name: SGDBandit
+Version: 0.1.0
+Summary: Code for algorithm SGDBandit to deal with MAB with heavy tails
+Home-page: None
+Author: None
+Author-email: None
+Maintainer: None
+Maintainer-email: None
+Requires-Python: >=3.9
+License-File: LICENSE
+Requires-Dist: dill
+Requires-Dist: joblib
+Requires-Dist: matplotlib
+Requires-Dist: numpy
+Requires-Dist: pre-commit
+Requires-Dist: seaborn
+Requires-Dist: tqdm
+Requires-Dist: scipy
+Requires-Dist: ipykernel
+Requires-Dist: Jinja2
+Requires-Dist: numba

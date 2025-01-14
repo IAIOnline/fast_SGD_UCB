@@ -17,7 +17,7 @@ def get_trials_regret(
 ):
     scores = {agent.name: 0.0 for agent in agents}
 
-    de f exp_trial(env, agents):
+    def exp_trial(env, agents):
         scores = {agent.name: 0.0 for agent in agents}
 
         for agent in agents:
