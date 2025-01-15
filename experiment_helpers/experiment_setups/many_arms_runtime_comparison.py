@@ -21,8 +21,9 @@ RANDOM_SEED = 123
 
 
 def main():
-    action_counts = [10] #, 1000, 5_000, 10_000]
-    n_steps = [5_000, 10_000] #, 20_000,]
+    action_counts = [10, 100, 1000, 5_000]
+    n_steps = [15_000] #, 20_000,]
+
 
     result = {}
     for T in tqdm(n_steps, desc=f"time"):
@@ -42,23 +43,23 @@ def main():
 
             agent_list = [
                 # agents.RobustUCBMedian(n_actions=n_actions, eps=0.0, v=10),
-                # agents.SGD_SMoM(n_actions, m=0, n=1, coeff=0.1, T=T, init_steps=3, R=10),
-                # agents.SGD_SMoM(n_actions, m=1, n=1, coeff=0.1, T=T, init_steps=3, R=10),
-                # agents.SGD_SMoM(n_actions, m=1, n=2, coeff=0.1, T=T, init_steps=3, R=10),
+                agents.SGD_SMoM(n_actions, m=0, n=1, coeff=0.1, T=T, init_steps=1, R=10),
+                agents.SGD_SMoM(n_actions, m=1, n=1, coeff=0.1, T=T, init_steps=1, R=10),
+                agents.SGD_SMoM(n_actions, m=1, n=2, coeff=0.1, T=T, init_steps=1, R=10),
                 # agents.APE(n_actions, c = 2, p = 1 + 0.25,),
                 # agents.APE(n_actions, c = 1, p = 1 + 1.,),
-                # agents.ClippedMedSmd(n_actions, T, m, stepsize = stepsize, clip_lambda=clip_lambda )
-                agents.HeavyInf(n_actions, alpha=2, sigma=20)
+                agents.ClippedMedSmd(n_actions, T, m, stepsize = stepsize, clip_lambda=clip_lambda ),
+                # agents.HeavyInf(n_actions, alpha=2, sigma=20)
                 ]
             agent_names = [
                 # "RUCB",
-                # "SGD-UCB 0.1",
-                # "SGD-UCB-Median 0.1",
-                # "SGD-UCB-SMoM 0.1",
+                "SGD-UCB 0.1",
+                "SGD-UCB-Median 0.1",
+                "SGD-UCB-SMoM 0.1",
                 # "APE +0.25",
                 # "APE 2",
-                # "ClippedMedSmd",
-                "HTINF"
+                "ClippedMedSmd",
+                # "HTINF"
                 ]
 
             assert len(agent_list)  == len(agent_names)

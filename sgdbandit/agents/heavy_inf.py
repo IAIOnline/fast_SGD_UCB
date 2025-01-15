@@ -9,7 +9,7 @@ ALPHA = 1.
 SIGMA = 1.
 
 class HeavyInf(AbstractAgent):
-    def __init__(self, n_actions, alpha=ALPHA, sigma = SIGMA, remember_reward_history=True):
+    def __init__(self, n_actions, alpha=ALPHA, sigma = SIGMA, remember_reward_history=False):
         super().__init__(n_actions, remember_reward_history)
 
         self.alpha = alpha  #: Store the constant :math:`\alpha` used by the Online-Mirror-Descent step using :math:`\alpha` Tsallis entropy.

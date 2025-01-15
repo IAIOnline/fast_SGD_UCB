@@ -57,7 +57,7 @@ class APE(AbstractAgent):
                     self.c / (self._history_pull ** (1 - 1/self.p))
         for i, (n_i, r_i) in enumerate(zip(self._history_pull, self._rewards)):
             arm_est[i] += self.c / (n_i ** (1 - 1/self.p)) * \
-                self.psi(np.array(r_i)/(self.c * (n_i**(1/self.p))))
+                self.psi((r_i)/(self.c * (n_i**(1/self.p))))
         return np.argmax(arm_est)
 
 

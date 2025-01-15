@@ -15,7 +15,7 @@ def get_trials_regret(
     agents,
     n_steps=5000,
     n_trials=100,
-    n_jobs=10,
+    n_jobs=16,
 ):
     
     thresholds = [0.1, 0.05]
@@ -62,41 +62,40 @@ def main():
     select the necessary parameters to run and the 
     necessary algorithms here
     """
-    K = 10_000  # n_steps, budget
+    T = 10_000  # n_steps, budget
     n_trials = 100
-    reward_arr = np.array(list(range(10)))
-    n_actions =len(reward_arr)
-    R = 10
+    n_actions =10
+    reward_arr = np.array(list(range(n_actions)))
+    R = n_actions
     env = environments.CauchyDistributionEnv(reward_arr=reward_arr, gamma=1)    
 
+    m = 2
+    clip_lambda = T ** 0.5
+    stepsize = (2* m + 1)/T  * 10
     rez = {}
 
     agent_list = [
-        agents.SGD_SMoM(n_actions, m=0, n=1, coeff=0.1, T=K, init_steps=3, R=R),
-        # agents.SGD_SMoM(n_actions, m=0, n=1, coeff=0.2, T=K, init_steps=3, R=R),
-        agents.SGD_SMoM(n_actions, m=1, n=1, coeff=0.1, T=K, init_steps=3, R=R),
-        # agents.SGD_SMoM(n_actions, m=1, n=1, coeff=0.2, T=K, init_steps=3, R=R),
-        agents.SGD_SMoM(n_actions, m=1, n=2, coeff=0.1, T=K, init_steps=3, R=R),
-        # agents.SGD_SMoM(n_actions, m=1, n=2, coeff=0.2, T=K, init_steps=3, R=R),
+        agents.SGD_SMoM(n_actions, m=0, n=1, coeff=0.1, T=T, init_steps=3, R=R),
+        agents.SGD_SMoM(n_actions, m=1, n=1, coeff=0.1, T=T, init_steps=3, R=R),
+        agents.SGD_SMoM(n_actions, m=1, n=2, coeff=0.1, T=T, init_steps=3, R=R),
         agents.RobustUCBMedian(n_actions=n_actions, eps=0.0, v=R),
         agents.APE(n_actions, c = 1., p = 1 + 0.,),
         agents.APE(n_actions, c = 1., p = 1 + 0.25,),
         agents.APE(n_actions, c = 1., p = 1 + 1.,),
-        # agents.HeavyInf(n_actions, alpha=1 + 0., sigma=40)
+        agents.ClippedMedSmd(n_actions,T, m, stepsize = stepsize, clip_lambda=clip_lambda )
+
+        # agents.HeavyInf(n_actions, alpha=1.., sigma=40)
 
     ]
     agent_names = [
         "SGD-UCB 0.1",
-        # "SGD-UCB 0.2",
         "SGD-UCB-Median 0.1",
-        # "SGD-UCB-Median 0.2",
         "SGD-UCB-SMoM 0.1",
-        # "SGD-UCB-SMoM 0.2",
         "RUCB",
         "APE",
         "APE +0.25",
         "APE 2",
-        # "Heavy-Inf"
+        "ClippedMedSmd"
     ]
     assert len(agent_list) == len(agent_names)
 
@@ -104,7 +103,7 @@ def main():
     for name, ag in zip(agent_names, agent_list):
         ag.name = name
     
-    result = get_trials_regret(env, agent_list, n_steps=K, n_trials=n_trials)    
+    result = get_trials_regret(env, agent_list, n_steps=T, n_trials=n_trials)    
     return result 
 
 

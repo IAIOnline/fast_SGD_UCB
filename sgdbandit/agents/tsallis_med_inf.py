@@ -53,7 +53,7 @@ class ClippedMedSmd(AbstractAgent):
                 old point and gradient estimation. __call__(old_point, grad_estimation)
 
         """
-        super().__init__(n_actions, False)
+        super().__init__(n_actions, remember_reward_history=False)
         self._total_calls = 0  # this is the number of times the arms has been selected
         self.n_actions = n_actions
         self.T = T
@@ -78,44 +78,27 @@ class ClippedMedSmd(AbstractAgent):
         self.last_pulls = 0
 
     def get_action(self):
-            
-            # print("lol")
         arm_t = np.random.choice(self.n_actions, 1, p=list(self.arm_probs))[0]
         self.last_pulls += 1
         return arm_t
 
     def _update(self):
         arm_grads = np.zeros_like(self.arm_probs)
-        for arm in range(self.n_actions):
+        for arm in self.arm_pulls_grad.keys():
             arm_rews = self.arm_pulls_grad[arm]
-            val = np.median(arm_rews) if len(arm_rews) > 0 else 0.
-            arm_grads[arm] = val
+            arm_grads[arm] = np.median(arm_rews)
         
         arm_grads = _clip(arm_grads, self.clip_lambda)
         
         loss_vec =  1./self.arm_probs**0.5 - self.stepsize * arm_grads
         self.arm_probs, self.normalizer_const = tsallis_prox_12(loss_vec, self.normalizer_const)
-        # self.arm_probs = (1 - self.alpha) * self.arm_probs + self.alpha/self.n_actions
 
     def update(self, action, reward):
+        # here we accumulate history for  2m + 1 steps for gradient estimation
         super().update(action, reward)
-        self.arm_pulls_grad[action].append(reward / self.arm_probs[action])
+        self.arm_pulls_grad[action] = np.append(self.arm_pulls_grad[action], (reward / self.arm_probs[action]))
 
         if self.last_pulls >= self.median_count * 2 + 1:
             self._update()
             self._unselect()
         self._total_calls += 1
-
-        # if self.selected:
-        #     self.selected_rewards.append(reward)
-        #     self.selected_count += 1
-        #     if self._total_calls < self.n_actions and self._init_steps:
-        #         if self.selected_count >= self._init_steps:
-        #             self._init_update()
-        #             self._un_select()
-        #             self._total_calls += 1
-        #     else:
-        #         if self.selected_count >= self._clear_arm.pulls_for_update:
-        #             self._update()
-        #             self._un_select()
-        #             self._total_calls += 1

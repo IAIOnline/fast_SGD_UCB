@@ -20,6 +20,9 @@ class ArmAgent(AbstractAgent):
         self.coeff = coeff
         self.delta = arm.delta
         self.arms = [deepcopy(arm) for i in range(n_actions)]
+        
+        self.arm_estimations = np.array([self.arms[i].x for i in range(self.n_actions)]).reshape(-1)
+        
         self._init_steps = init_steps
         self._un_select()
 
@@ -49,9 +52,8 @@ class ArmAgent(AbstractAgent):
         if t < self.n_actions:
             self._select(t)
             return t
-        x_s = np.array([self.arms[i].x for i in range(self.n_actions)]).reshape(-1)
 
-        bounds = x_s + (self.coeff * np.sqrt(np.log(t_pulls) / self._history_pull)).reshape(-1)
+        bounds = self.arm_estimations + (self.coeff * np.sqrt(np.log(t_pulls) / self._history_pull)).reshape(-1)
         arm = np.argmax(bounds)
         self._select(arm)
         return arm
@@ -59,6 +61,7 @@ class ArmAgent(AbstractAgent):
     def _update(self):
         arm = self.arms[self.selected_arm]
         arm.update(self.selected_rewards)
+        self.arm_estimations[self.selected_arm] = arm.x[0]
         return
 
     def _init_update(self):

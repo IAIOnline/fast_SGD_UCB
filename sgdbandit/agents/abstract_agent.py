@@ -11,7 +11,7 @@ class AbstractAgent(metaclass=ABCMeta):
 
         self.remember_reward_history = remember_reward_history
         if self.remember_reward_history:
-            self._rewards = [[] for i in range(self.n_actions)]
+            self._rewards = [np.array([]) for i in range(self.n_actions)]
         if not hasattr(self, "_name"):
             self._name = self.__class__.__name__
 
@@ -40,7 +40,7 @@ class AbstractAgent(metaclass=ABCMeta):
         self._total_pulls += 1
         self._history_pull[action] += 1
         if self.remember_reward_history:
-            self._rewards[action].append(reward)
+            self._rewards[action] = np.append(self._rewards[action],reward)
 
     @property
     def name(self):

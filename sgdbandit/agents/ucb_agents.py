@@ -101,8 +101,7 @@ class RobustUCBMedian(AbstractAgent):
             k = int(min(1 - 8 * log_delta, n / 2))
             # k = int(min(8 * np.log(1 / 8 - log_delta), n / 2))
             N = int(n / k)
-            means = [np.mean(x_s[j * N : (j + 1) * N]) for j in range(k)]
-            est = np.median(means)
+            est = np.median([np.mean(x_s[j * N : (j + 1) * N]) for j in range(k)])
             ans[i] = est
         return ans
 
