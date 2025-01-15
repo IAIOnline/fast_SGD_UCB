@@ -178,3 +178,17 @@ python ./experiment_helpers/experiment_setups/delta_heavy_tail.py delta_heavy.js
 this will save experiment in `delta_light.json`/`delta_heavy.json` file. To draw them use ![experiment_drawer.ipynb](./experiment_drawer.ipynb)
 
 To make experiments be easily tried to run, we have commented out fewer algorithms and made fewer steps in the presented code. To run all the algorithms for the required number of steps and attempts, simply set the desired budget `K` and `n_trials` in experiment running codes.
+
+## Bibtex
+
+If you find this repository useful for your research, please consider citing our work(s):
+
+1. Fast UCB-type algorithms for stochastic bandits with heavy and super heavy symmetric noise
+```
+@article{dorn2024fast,
+  title={Fast UCB-type algorithms for stochastic bandits with heavy and super heavy symmetric noise},
+  author={Dorn, Yuriy and Katrutsa, Aleksandr and Latypov, Ilgam and Pudovikov, Andrey},
+  journal={arXiv preprint arXiv:2402.07062},
+  year={2024}
+}
+```
